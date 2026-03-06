@@ -19,15 +19,13 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.services.teslamate.loadbalancer.server.port: "4000"
-      traefik.http.middlewares.redirect.redirectscheme.scheme: "https"
       traefik.http.middlewares.teslamate-auth.basicauth.realm: "teslamate"
       traefik.http.middlewares.teslamate-auth.basicauth.usersfile: "/auth/.htpasswd"
       traefik.http.middlewares.teslamate-auth.basicauth.removeheader: "true"
-      traefik.http.routers.teslamate-insecure.rule: "Host(`${FQDN_TM}`)"
-      traefik.http.routers.teslamate-insecure.middlewares: "redirect"
       traefik.http.routers.teslamate.rule: "Host(`${FQDN_TM}`)"
       traefik.http.routers.teslamate.middlewares: "teslamate-auth"
       traefik.http.routers.teslamate.entrypoints: "websecure"
+      traefik.http.routers.teslamate.tls: "true"
     cap_drop:
       - ALL
 
@@ -62,12 +60,10 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.services.grafana.loadbalancer.server.port: "3000"
-      traefik.http.middlewares.redirect.redirectscheme.scheme: "https"
-      traefik.http.routers.grafana-insecure.rule: "Host(`${FQDN_TM}`)"
-      traefik.http.routers.grafana-insecure.middlewares: "redirect"
       traefik.http.routers.grafana.rule: "Host(`${FQDN_TM}`) && (Path(`/grafana`) || PathPrefix(`/grafana/`))"
-      traefik.http.routers.grafana.entrypoints: "websecure"
       traefik.http.routers.grafana.middlewares: "teslamate-auth"
+      traefik.http.routers.grafana.entrypoints: "websecure"
+      traefik.http.routers.grafana.tls: "true"
 
   mosquitto:
     image: eclipse-mosquitto:2

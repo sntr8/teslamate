@@ -19,13 +19,13 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.services.teslamate.loadbalancer.server.port: "4000"
-      traefik.http.middlewares.teslamate-auth.basicauth.realm: "teslamate"
-      traefik.http.middlewares.teslamate-auth.basicauth.usersfile: "/auth/.htpasswd"
-      traefik.http.middlewares.teslamate-auth.basicauth.removeheader: "true"
+      traefik.http.middlewares.authelia-auth.forwardauth.address: "http://authelia:9091/authelia/api/verify?rd=https://${FQDN_TM}/authelia/"
+      traefik.http.middlewares.authelia-auth.forwardauth.trustForwardHeader: "true"
+      traefik.http.middlewares.authelia-auth.forwardauth.authResponseHeaders: "Remote-User,Remote-Groups,Remote-Name,Remote-Email"
       traefik.http.routers.teslamate.rule: "Host(`${FQDN_TM}`)"
-      traefik.http.routers.teslamate.middlewares: "teslamate-auth"
       traefik.http.routers.teslamate.entrypoints: "websecure"
       traefik.http.routers.teslamate.tls: "true"
+      traefik.http.routers.teslamate.middlewares: "authelia-auth"
     cap_drop:
       - ALL
 
@@ -61,9 +61,9 @@ services:
       traefik.enable: "true"
       traefik.http.services.grafana.loadbalancer.server.port: "3000"
       traefik.http.routers.grafana.rule: "Host(`${FQDN_TM}`) && (Path(`/grafana`) || PathPrefix(`/grafana/`))"
-      traefik.http.routers.grafana.middlewares: "teslamate-auth"
       traefik.http.routers.grafana.entrypoints: "websecure"
       traefik.http.routers.grafana.tls: "true"
+      traefik.http.routers.grafana.middlewares: "authelia-auth"
 
   mosquitto:
     image: eclipse-mosquitto:2
@@ -85,12 +85,30 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--entrypoints.websecure.http3.advertisedPort=443"
+      - "--entrypoints.websecure.forwardedHeaders.insecure=true"
     ports:
       - "127.0.0.1:9080:80"
       - "127.0.0.1:9443:443"
     volumes:
       - ./.htpasswd:/auth/.htpasswd
       - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  authelia:
+    image: authelia/authelia:latest
+    restart: always
+    volumes:
+      - ./authelia:/config
+    environment:
+      - TZ=${TM_TZ}
+      - FQDN=${FQDN_TM}
+      - AUTHELIA_JWT_SECRET=${AUTHELIA_JWT_SECRET}
+      - AUTHELIA_SESSION_SECRET=${AUTHELIA_SESSION_SECRET}
+      - AUTHELIA_STORAGE_ENCRYPTION_KEY=${AUTHELIA_STORAGE_ENCRYPTION_KEY}
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.authelia.rule: "Host(`${FQDN_TM}`) && PathPrefix(`/authelia`)"
+      traefik.http.routers.authelia.entrypoints: "websecure"
+      traefik.http.routers.authelia.tls: "true"
 
 volumes:
   teslamate-db:

@@ -1,0 +1,36 @@
+server:
+  address: 'tcp://0.0.0.0:9091/'
+  base_path: '/authelia'
+
+log:
+  level: 'info'
+
+authentication_backend:
+  file:
+    path: '/config/users_database.yml'
+
+session:
+  name: 'authelia_session'
+  secret: '{{ env "AUTHELIA_SESSION_SECRET" }}'
+  expiration: '720h'
+  inactivity: '168h'
+  remember_me: '720h'
+  cookies:
+    - domain: 'tesla.sntrserv.net'
+      authelia_url: 'https://tesla.sntrserv.net/authelia/'
+      default_redirection_url: 'https://tesla.sntrserv.net/'
+
+storage:
+  local:
+    path: '/config/db.sqlite3'
+  encryption_key: '{{ env "AUTHELIA_STORAGE_ENCRYPTION_KEY" }}'
+
+access_control:
+  default_policy: 'deny'
+  rules:
+    - domain: 'tesla.sntrserv.net'
+      policy: 'one_factor'
+
+notifier:
+  filesystem:
+    filename: '/config/notification.txt'

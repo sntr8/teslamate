@@ -1,5 +1,5 @@
 server:
-  address: 'tcp://0.0.0.0:9091/authelia'
+  address: 'tcp://0.0.0.0:9091'
 
 log:
   level: 'info'
@@ -16,7 +16,7 @@ session:
   remember_me: '720h'
   cookies:
     - domain: 'tesla.sntrserv.net'
-      authelia_url: 'https://tesla.sntrserv.net/authelia/'
+      authelia_url: 'https://tesla.sntrserv.net/authelia'
       default_redirection_url: 'https://tesla.sntrserv.net/'
 
 storage:

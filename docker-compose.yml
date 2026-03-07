@@ -19,10 +19,10 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.services.teslamate.loadbalancer.server.port: "4000"
-      traefik.http.middlewares.authelia-auth.forwardauth.address: "http://authelia:9091/authelia/api/verify?rd=https://${FQDN_TM}/authelia/"
+      traefik.http.middlewares.authelia-auth.forwardauth.address: "http://authelia:9091/api/authz/forward-auth"
       traefik.http.middlewares.authelia-auth.forwardauth.trustForwardHeader: "true"
       traefik.http.middlewares.authelia-auth.forwardauth.authResponseHeaders: "Remote-User,Remote-Groups,Remote-Name,Remote-Email"
-      traefik.http.routers.teslamate.rule: "Host(`${FQDN_TM}`)"
+      traefik.http.routers.teslamate.rule: "Host(`${FQDN_TM}`) && !PathPrefix(`/authelia`)"
       traefik.http.routers.teslamate.entrypoints: "websecure"
       traefik.http.routers.teslamate.tls: "true"
       traefik.http.routers.teslamate.middlewares: "authelia-auth"

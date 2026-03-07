@@ -22,10 +22,16 @@ services:
       traefik.http.middlewares.authelia-auth.forwardauth.address: "http://authelia:9091/api/authz/forward-auth"
       traefik.http.middlewares.authelia-auth.forwardauth.trustForwardHeader: "true"
       traefik.http.middlewares.authelia-auth.forwardauth.authResponseHeaders: "Remote-User,Remote-Groups,Remote-Name,Remote-Email"
-      traefik.http.routers.teslamate.rule: "Host(`${FQDN_TM}`) && !PathPrefix(`/authelia`)"
+      traefik.http.routers.teslamate.rule: "Host(`${FQDN_TM}`) && !PathPrefix(`/authelia`) && !PathPrefix(`/static`)"
       traefik.http.routers.teslamate.entrypoints: "websecure"
       traefik.http.routers.teslamate.tls: "true"
       traefik.http.routers.teslamate.middlewares: "authelia-auth"
+      traefik.http.routers.teslamate.priority: "1"
+      traefik.http.routers.teslamate-static.rule: "Host(`${FQDN_TM}`) && PathPrefix(`/static`)"
+      traefik.http.routers.teslamate-static.entrypoints: "websecure"
+      traefik.http.routers.teslamate-static.tls: "true"
+      traefik.http.routers.teslamate-static.service: "teslamate"
+      traefik.http.routers.teslamate-static.priority: "100"
     cap_drop:
       - ALL
 
@@ -109,6 +115,7 @@ services:
       traefik.http.routers.authelia.rule: "Host(`${FQDN_TM}`) && PathPrefix(`/authelia`)"
       traefik.http.routers.authelia.entrypoints: "websecure"
       traefik.http.routers.authelia.tls: "true"
+      traefik.http.services.authelia.loadbalancer.server.port: "9091"
 
 volumes:
   teslamate-db:

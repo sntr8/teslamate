@@ -1,7 +1,0 @@
-users:
-  admin:
-    displayname: '{{ env "AUTHELIA_USER" }}'
-    password: '{{ env "AUTHELIA_PASSWORD" }}'
-    email: admin@sntrserv.net
-    groups:
-      - admins

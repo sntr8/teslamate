@@ -4,6 +4,9 @@ server:
 log:
   level: 'info'
 
+theme:
+  default: 'auto'
+
 identity_validation:
   reset_password:
     jwt_secret: '{{ env "AUTHELIA_JWT_SECRET" }}'

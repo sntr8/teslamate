@@ -4,7 +4,9 @@ server:
 log:
   level: 'info'
 
-jwt_secret: '{{ env "AUTHELIA_JWT_SECRET" }}'
+identity_validation:
+  reset_password:
+    jwt_secret: '{{ env "AUTHELIA_JWT_SECRET" }}'
 
 authentication_backend:
   file:

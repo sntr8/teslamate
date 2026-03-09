@@ -4,8 +4,7 @@ server:
 log:
   level: 'info'
 
-theme:
-  default: 'auto'
+theme: 'auto'
 
 identity_validation:
   reset_password:

@@ -12,7 +12,7 @@ services:
       - DATABASE_HOST=database
       - MQTT_HOST=mosquitto
       - VIRTUAL_HOST=${FQDN_TM}
-      - CHECK_ORIGIN=false
+      - CHECK_ORIGIN=true
       - TZ=${TM_TZ}
     volumes:
       - ./import:/opt/app/import

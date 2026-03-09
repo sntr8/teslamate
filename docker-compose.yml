@@ -12,11 +12,8 @@ services:
       - DATABASE_HOST=database
       - MQTT_HOST=mosquitto
       - VIRTUAL_HOST=${FQDN_TM}
-      - CHECK_ORIGIN=true
+      - CHECK_ORIGIN=false
       - TZ=${TM_TZ}
-      - URL_HOST=${FQDN_TM}
-      - URL_PORT=443
-      - URL_SCHEME=https
     volumes:
       - ./import:/opt/app/import
     labels:
